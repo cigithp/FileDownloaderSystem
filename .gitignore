@@ -1,3 +1,4 @@
 .idea
 filedownloader.iml
 /target
+.DS_Store

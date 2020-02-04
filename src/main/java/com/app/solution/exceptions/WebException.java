@@ -1,0 +1,7 @@
+package com.app.solution.exceptions;
+
+public class WebException extends Exception {
+    public WebException(String message) {
+        super(message);
+    }
+}

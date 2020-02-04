@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface IFileDetailHistory
+public interface IFileDetailHistoryDAO
         extends JpaRepository<FileDetailHistory, UUID> { }

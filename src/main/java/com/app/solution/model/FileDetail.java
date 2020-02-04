@@ -1,12 +1,19 @@
 package com.app.solution.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "ignoreUnknown", "true"})
+@JsonSerialize
 public class FileDetail {
     @Id
     @GeneratedValue(generator = "uuid2", strategy = GenerationType.IDENTITY)
@@ -17,10 +24,14 @@ public class FileDetail {
     private String destination;
     private String protocol;
     private String status;
+    @CreationTimestamp
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
+    @UpdateTimestamp
     @Column(name = "last_modified")
     private LocalDateTime lastModified;
+
+    public FileDetail(){}
 
     public FileDetail(String name, String source, String destination, String protocol, String status) {
         this.name = name;

@@ -1,25 +1,33 @@
 package com.app.solution.controller;
 
 import com.app.solution.model.FileDetail;
-import com.app.solution.service.FileService;
+import com.app.solution.service.FDSService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/file")
+@RequestMapping("/v1/file")
+@Component
 public class FileResourceV1 {
 
     @Autowired
-    FileService fileService;
+    FDSService fdsService;
 
     @PostMapping("/download")
-    public List<FileDetail> download(@RequestBody Map<String, List<String>> body) {
-        return fileService.download(body.get("urls"));
+    public List<String[]> download(@RequestBody Map<String, List<String>> body) {
+        return fdsService.create(body.get("urls"));
     }
+
+    @GetMapping("/{id}/status")
+    public Optional<FileDetail> status(@PathVariable("id") UUID id) {
+        return fdsService.get(id);
+    }
+
+
 }

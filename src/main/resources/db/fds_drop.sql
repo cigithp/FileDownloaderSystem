@@ -1,4 +1,5 @@
 USE fds;
-DROP TABLE file_detail;
-DROP TABLE file_detail_history;
+DROP TABLE IF EXISTS file_detail;
+DROP TABLE IF EXISTS file_detail_history;
+DROP TABLE IF EXISTS download_metrics;
 DROP DATABASE fds;

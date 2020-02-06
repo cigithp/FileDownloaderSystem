@@ -1,6 +1,5 @@
 package com.app.solution.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,11 +18,14 @@ public class FileDetail {
     @GeneratedValue(generator = "uuid2", strategy = GenerationType.IDENTITY)
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
+    @Column(name = "download_id")
+    private UUID downloadId;
     private String name;
     private String source;
     private String destination;
     private String protocol;
     private String status;
+    private String size;
     @CreationTimestamp
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -41,6 +43,22 @@ public class FileDetail {
         this.status = status;
         this.creationDate = LocalDateTime.now();
         this.lastModified = LocalDateTime.now();
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public UUID getDownloadId() {
+        return downloadId;
+    }
+
+    public void setDownloadId(UUID downloadId) {
+        this.downloadId = downloadId;
     }
 
     public UUID getId() {

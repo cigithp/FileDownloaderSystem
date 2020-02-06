@@ -5,6 +5,8 @@ import com.app.solution.model.FileDetail;
 import com.app.solution.util.ClientFactory;
 import com.app.solution.util.Protocol;
 import com.app.solution.util.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
@@ -17,7 +19,7 @@ public interface FileService {
     @Service
     @Transactional
     class FileServiceImpl implements FileService {
-
+        private static final Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
         @Autowired
         IFileDetailDAO fileDetail;
 
@@ -32,34 +34,28 @@ public interface FileService {
                     case HTTP:
                     case HTTPS:
                         ClientFactory httpClient = context.getBean(ClientFactory.class);
-                        httpClient.downloadHTTP(fd.getSource(), fd.getDestination());
-                        fd = fileDetail.getOne(fd.getId());
-                        fd.setStatus(Status.SUCCESS.name());
+                        if(httpClient.downloadHTTP(fd)) {
+                            fd.setStatus(Status.SUCCESS.name());
+                        } else {
+                            fd.setStatus(Status.FAILURE.name());
+                        }
                         fileDetail.saveAndFlush(fd);
                         break;
                     case FTP:
                         ClientFactory ftpClient = context.getBean(ClientFactory.class);
-                        String prefix = fd.getProtocol().toLowerCase()+ "://";
-                        String host = fd.getSource().substring(prefix.length(), fd.getSource().lastIndexOf("/"));
-                        boolean success = ftpClient.downloadFTP(host, fd.getName(), fd.getDestination());
-                        if (success) {
-                            fd = fileDetail.getOne(fd.getId());
+                        if (ftpClient.downloadFTP(fd)) {
                             fd.setStatus(Status.SUCCESS.name());
-                            fileDetail.saveAndFlush(fd);
                         } else {
-                            fd = fileDetail.getOne(fd.getId());
                             fd.setStatus(Status.FAILURE.name());
-                            fileDetail.saveAndFlush(fd);
                         }
+                        fileDetail.saveAndFlush(fd);
                         break;
                     default:
-                        fd = fileDetail.getOne(fd.getId());
                         fd.setStatus(Status.FAILURE.name());
                         fileDetail.saveAndFlush(fd);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                fd = fileDetail.getOne(fd.getId());
                 fd.setStatus(Status.FAILURE.name());
                 fileDetail.saveAndFlush(fd);
             }
